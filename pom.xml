@@ -64,6 +64,11 @@
       <artifactId>spring-context</artifactId>
       <version>3.1.4.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>com.revature</groupId>
+      <artifactId>ims-backend</artifactId>
+      <version>SNAPSHOT</version>
+    </dependency>
   </dependencies>
   
   
