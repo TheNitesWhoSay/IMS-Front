@@ -13,7 +13,7 @@
   <!-- Map all requests to the DispatcherServlet for handling -->
   <servlet-mapping>
     <servlet-name>ims</servlet-name>
-    <url-pattern>*.do</url-pattern>
+    <url-pattern>/</url-pattern>
   </servlet-mapping>
   
 </web-app>
