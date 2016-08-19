@@ -3,6 +3,7 @@ package com.revature.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 
@@ -41,19 +42,30 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 
-		List<Category> categories = bd.getCategories();
-		Map<String, Category> categoryLookup = new HashMap<String, Category>();
-		for ( Category category : categories ) {
-			categoryLookup.put(category.getDescription(), category);
-		}
-		
-		servletContext.setAttribute("listOfCategories", categories);
-		servletContext.setAttribute("categoryLookup", categoryLookup);
+		cacheCategories();
+		cacheProducts();
 	}
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
+	}
+	
+	public void cacheCategories() {
+		
+		Set<Category> categories = bd.getCategories();
+		Map<String, Category> categoryLookup = new HashMap<String, Category>();
+		for ( Category category : categories ) {
+			categoryLookup.put(category.getDescription(), category);
+		}
+		servletContext.setAttribute("listOfCategories", categories);
+		servletContext.setAttribute("categoryLookup", categoryLookup);
+	}
+	
+	public void cacheProducts() {
+		
+		Set<Product> products = bd.getProducts();
+		servletContext.setAttribute("listOfProducts", products);
 	}
 
 	@RequestMapping(value="test.do", method=RequestMethod.GET)
@@ -67,6 +79,12 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 		return "manage-products";
 	}
 	
+	@RequestMapping(value="manageCategories.do", method=RequestMethod.GET)
+	public String manageCategories(HttpServletRequest req) {
+		req.setAttribute("category", new Category());
+		return "manage-categories";
+	}
+	
 	@RequestMapping(value="editProduct.do", method=RequestMethod.POST)
 	public ModelAndView editProduct(@Valid Product product,
 			BindingResult bindingResult, ModelMap map,
@@ -75,8 +93,20 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 		ProductHelper.addCategoriesToProduct(product, req.getParameterValues("categories"),
 				servletContext.getAttribute("categoryLookup"));
 		
-		System.out.println(product);
-		
+		bd.insertProduct(product);
+		cacheProducts();
 		return new ModelAndView("manage-products");
+	}
+	
+	@RequestMapping(value="editCategory.do", method=RequestMethod.POST)
+	public ModelAndView editCategory(@Valid Category category,
+			BindingResult bindingResult, ModelMap map,
+			HttpServletRequest req, HttpServletResponse resp)
+	{
+		System.out.println(category);
+		if ( !bd.insertCategory(category) )
+			System.out.println("insert failed");
+		cacheCategories();
+		return new ModelAndView("manage-categories");
 	}
 }

@@ -1,7 +1,10 @@
 <html>
+<head>
+<title>IMS Home</title>
+</head>
 <body>
-<h2>Hello World!</h2>
-<a href="test.do">Test Controller...</a>
-<a href="manageProducts.do">Manage Products</a>
+<h2>Inventory Management System Home</h2>
+<a href="manageProducts.do">Manage Products</a><br />
+<a href="manageCategories.do">Manage Categories</a><br />
 </body>
 </html>
