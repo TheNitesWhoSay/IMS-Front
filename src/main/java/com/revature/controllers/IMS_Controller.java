@@ -22,6 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.revature.business.ProductHelper;
 import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Product;
+import com.revature.ims_backend.entities.Stock;
+import com.revature.logging.Log;
 
 @Controller
 public class IMS_Controller implements ServletContextAware, InitializingBean {
@@ -66,6 +68,12 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 		return "test";
 	}
 	
+	@RequestMapping(value="manageInventory.do", method=RequestMethod.GET)
+	public String manageInventory(HttpServletRequest req) {
+		req.setAttribute("stock", new Stock());
+		return "manage-inventory";
+	}
+	
 	@RequestMapping(value="manageProducts.do", method=RequestMethod.GET)
 	public String manageProducts(HttpServletRequest req) {
 		req.setAttribute("product", new Product());
@@ -76,6 +84,17 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 	public String manageCategories(HttpServletRequest req) {
 		req.setAttribute("category", new Category());
 		return "manage-categories";
+	}
+	
+	@RequestMapping(value="editStock.do", method=RequestMethod.POST)
+	public ModelAndView editStock(@Valid Stock stock,
+			BindingResult bindingResult, ModelMap map,
+			HttpServletRequest req, HttpServletResponse resp)
+	{
+		int upc = Integer.parseInt(req.getParameter("product"));
+		bd.updateStock(upc, stock.getNumInStock());
+		cacheProducts();
+		return new ModelAndView("manage-inventory");
 	}
 	
 	@RequestMapping(value="editProduct.do", method=RequestMethod.POST)
