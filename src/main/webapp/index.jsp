@@ -1,10 +1,13 @@
-<html>
-<head>
-<title>IMS Home</title>
-</head>
-<body>
-<h2>Inventory Management System Home</h2>
-<a href="manageProducts.do">Manage Products</a><br />
-<a href="manageCategories.do">Manage Categories</a><br />
-</body>
-</html>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ include file="partials/head.jsp" %>
+<div class="row">
+	<div class="col-sm-3">
+		<%@ include file="partials/sidebar.jsp" %>
+	</div>
+	<div class="col-sm-9">
+		<%@ include file="partials/dashboard.jsp" %>
+	</div>
+
+</div>
+<%@ include file="partials/foot.jsp" %>

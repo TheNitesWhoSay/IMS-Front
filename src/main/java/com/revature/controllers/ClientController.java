@@ -47,8 +47,6 @@ public class ClientController implements ServletContextAware, InitializingBean {
 		for (ClientType ct: clientTypeList) {
 			clientTypes.put(ct.getType(), ct);
 		}
-		System.out.println(clientTypes);
-		System.out.println(states);
 	}
 
 	@Override
@@ -163,9 +161,10 @@ public class ClientController implements ServletContextAware, InitializingBean {
 			return mv;
 		}
 		else {
+			System.out.println(client.getAddress().getId());
 			DataLayer dl = new DataLayer();
 			dl.beginTransaction();
-			dl.insertClient(client);
+			dl.updateClient(client);
 			dl.commitOrRollback();
 			return new ModelAndView("redirect:/clients");
 		}

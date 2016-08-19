@@ -3,9 +3,10 @@
 <h2>Actions</h2>
 <div class="well">
 	<ul class="list-unstyled">
-		<li><a href="#">Dashboard</a></li>
-		<li><a href="#">View Clients</a></li>
-		<li><a href="#">View Products</a></li>
+		<li><a href="/IMS-Front/">Dashboard</a></li>
+		<li><a href="/IMS-Front/clients">View Clients</a></li>
+		<li><a href="/IMS-Front/manageProducts.do">View Products</a></li>
+		<li><a href="/IMS-Front/manageCategories.do">Manage Categories</a></li>
 		<li><a href="#">View Invoices</a></li>
 		<li><a href="#">New Invoice</a></li>
 		<li><a href="#">Generate Reports</a></li>

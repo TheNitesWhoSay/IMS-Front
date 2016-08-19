@@ -11,7 +11,7 @@
 		<h2>New Client</h2>
 	</c:otherwise>
 </c:choose>
-<form:form modelAttribute="client" action="${'/IMS-Front/clients/' += (client.id ne 0 ? 'id/' += client.id += '/edit' : 'new')}">
+<form:form modelAttribute="client">
 	<div class="form-group row">
 		<div class="col-sm-9">
 			<label for="name">Client Name</label>
@@ -41,6 +41,7 @@
 		</div>
 	</div>
 	<div class="form-group">
+		<form:hidden path="address.id"/>
 		<label for="address1">Address 1</label>
 		<form:input path="address.address1" cssClass="form-control" />
 	</div>
