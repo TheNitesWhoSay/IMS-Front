@@ -116,16 +116,8 @@ public class ClientController implements ServletContextAware, InitializingBean {
 	@RequestMapping(value="clients/new", method=RequestMethod.POST)
 	public ModelAndView createClient(@Valid Client client, BindingResult bindingResult, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
-		// TODO: Find a cleaner way to validate lookup tables
-		if (bindingResult.getFieldError("address.state") != null && bindingResult.getFieldError("address.state").isBindingFailure()
-				&& bindingResult.getFieldError("clientType") != null && bindingResult.getFieldError("clientType").isBindingFailure()) {
-			String stateParam = request.getParameter("address.state");
-			String clientTypeParam = request.getParameter("clientType");
-			client.getAddress().setState(states.get(stateParam));
-			client.setClientType(clientTypes.get(clientTypeParam));
-		}
-		
-		if (bindingResult.getErrorCount() > 2 || client.getAddress().getState() == null || client.getClientType() == null) {
+	
+		if (bindingResult.hasErrors()) {
 			mv.setViewName("/edit-client");
 			mv.addObject("client", client);
 			mv.addObject("states", states);
@@ -144,16 +136,8 @@ public class ClientController implements ServletContextAware, InitializingBean {
 	@RequestMapping(value="clients/id/{id}/edit", method=RequestMethod.POST)
 	public ModelAndView updateClient(@Valid Client client, BindingResult bindingResult, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
-		// TODO: Find a cleaner way to validate lookup tables
-		if (bindingResult.getFieldError("address.state") != null && bindingResult.getFieldError("address.state").isBindingFailure()
-				&& bindingResult.getFieldError("clientType") != null && bindingResult.getFieldError("clientType").isBindingFailure()) {
-			String stateParam = request.getParameter("address.state");
-			String clientTypeParam = request.getParameter("clientType");
-			client.getAddress().setState(states.get(stateParam));
-			client.setClientType(clientTypes.get(clientTypeParam));
-		}
-		
-		if (bindingResult.getErrorCount() > 2 || client.getAddress().getState() == null || client.getClientType() == null) {
+
+		if (bindingResult.hasErrors()) {
 			mv.setViewName("/edit-client");
 			mv.addObject("client", client);
 			mv.addObject("states", states);
@@ -161,7 +145,6 @@ public class ClientController implements ServletContextAware, InitializingBean {
 			return mv;
 		}
 		else {
-			System.out.println(client.getAddress().getId());
 			DataLayer dl = new DataLayer();
 			dl.beginTransaction();
 			dl.updateClient(client);
