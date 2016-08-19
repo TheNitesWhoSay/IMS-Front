@@ -11,7 +11,7 @@
   	   OR  <bean class="your.package.ControllerClass"> -->
   <context:component-scan base-package="com.revature.controllers" />
   
-  <mvc:annotation-driven />
+  <mvc:annotation-driven conversion-service="conversionService" />
   
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="prefix" value="" /> <!-- /pages/ -->
@@ -28,5 +28,18 @@
       </map>
     </property>
   </bean>
+  
+  <!-- Setup converters -->
+  <bean id="conversionService"
+      class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <property name="converters">
+        <list>
+            <bean class="com.revature.converters.StateAbbreviationToString" />
+            <bean class="com.revature.converters.StringToStateAbbreviation" />
+            <bean class="com.revature.converters.ClientTypeToString" />
+            <bean class="com.revature.converters.StringToClientType" />
+        </list>
+    </property>
+	</bean>
   
 </beans>
