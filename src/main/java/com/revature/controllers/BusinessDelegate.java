@@ -1,12 +1,14 @@
 package com.revature.controllers;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import com.revature.ims_backend.entities.Category;
+import com.revature.ims_backend.entities.Product;
 import com.revature.persist.DataLayer;
 
 @Component
@@ -34,8 +36,6 @@ public class BusinessDelegate {
 		}
 	}
 
-
-
 	@Override
 	protected void finalize() throws Throwable {
 		if ( dataLayer != null ) {
@@ -44,8 +44,28 @@ public class BusinessDelegate {
 		}
 	}
 	
-	public List<Category> getCategories() {
+	public Set<Category> getCategories() {
 		return dataLayer.getCategories();
+	}
+	
+	public Set<Product> getProducts() {
+		return dataLayer.getProducts();
+	}
+
+	public boolean insertProduct(Product product) {
+		dataLayer.beginTransaction();
+		for ( Category category : product.getCategories() )
+			category.addProduct(product);
+		dataLayer.insertProduct(product);
+		for ( Category category : product.getCategories() )
+			dataLayer.updateCategory(category);
+		return dataLayer.commitOrRollback();
+	}
+
+	public boolean insertCategory(Category category) {
+		dataLayer.beginTransaction();
+		dataLayer.insertCategory(category);
+		return dataLayer.commitOrRollback();
 	}
 	
 }
