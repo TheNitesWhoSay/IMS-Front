@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Product;
+import com.revature.ims_backend.entities.Stock;
 import com.revature.persist.DataLayer;
 
 @Component
@@ -52,8 +53,13 @@ public class BusinessDelegate {
 		return dataLayer.getProducts();
 	}
 
+	public Product getProductByUpc(int upc) {
+		return dataLayer.getProductByUpc(upc);
+	}
+
 	public boolean insertProduct(Product product) {
 		dataLayer.beginTransaction();
+		dataLayer.insertStock(product.getStock());
 		for ( Category category : product.getCategories() )
 			category.addProduct(product);
 		dataLayer.insertProduct(product);
@@ -65,6 +71,20 @@ public class BusinessDelegate {
 	public boolean insertCategory(Category category) {
 		dataLayer.beginTransaction();
 		dataLayer.insertCategory(category);
+		return dataLayer.commitOrRollback();
+	}
+	
+	public boolean insertStock(Stock stock) {
+		dataLayer.beginTransaction();
+		dataLayer.insertStock(stock);
+		return dataLayer.commitOrRollback();
+	}
+
+	public boolean updateStock(int productUpc, int stockAmount) {
+		dataLayer.beginTransaction();
+		Product product = getProductByUpc(productUpc);
+		product.getStock().setNumInStock(stockAmount);
+		dataLayer.updateProduct(product);
 		return dataLayer.commitOrRollback();
 	}
 	
