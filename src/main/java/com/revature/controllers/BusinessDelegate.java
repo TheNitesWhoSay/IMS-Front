@@ -1,8 +1,9 @@
 package com.revature.controllers;
 
-import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -14,12 +15,12 @@ import com.revature.persist.DataLayer;
 
 @Component
 @Scope(value="session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class BusinessDelegate {
+public class BusinessDelegate implements DisposableBean {
 
 	private DataLayer dataLayer = new DataLayer();
 	
 	public BusinessDelegate() {
-		
+		System.out.println(this);
 	}
 	
 	public DataLayer getDataLayer() {
@@ -86,6 +87,12 @@ public class BusinessDelegate {
 		product.getStock().setNumInStock(stockAmount);
 		dataLayer.updateProduct(product);
 		return dataLayer.commitOrRollback();
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		dataLayer.close();
+		dataLayer = null;
 	}
 	
 }
