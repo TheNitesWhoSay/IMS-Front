@@ -20,6 +20,7 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.revature.business.ProductHelper;
+import com.revature.converters.StringToCategory;
 import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Product;
 import com.revature.ims_backend.entities.Stock;
@@ -36,7 +37,6 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
 		cacheCategories();
 		cacheProducts();
 	}
@@ -53,6 +53,7 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 		for ( Category category : categories ) {
 			categoryLookup.put(category.getDescription(), category);
 		}
+		StringToCategory.setCategories(categoryLookup);
 		servletContext.setAttribute("listOfCategories", categories);
 		servletContext.setAttribute("categoryLookup", categoryLookup);
 	}
@@ -86,6 +87,7 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 		return "manage-categories";
 	}
 	
+	
 	@RequestMapping(value="editStock.do", method=RequestMethod.POST)
 	public ModelAndView editStock(@Valid Stock stock,
 			BindingResult bindingResult, ModelMap map,
@@ -101,10 +103,14 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 	public ModelAndView editProduct(@Valid Product product,
 			BindingResult bindingResult, ModelMap map,
 			HttpServletRequest req, HttpServletResponse resp)
-	{
+	{	
+		if (bindingResult.hasErrors()) {
+			return new ModelAndView("manage-products");
+		}
+		/*
 		ProductHelper.addCategoriesToProduct(product, req.getParameterValues("categories"),
 				servletContext.getAttribute("categoryLookup"));
-		
+		*/
 		bd.insertProduct(product);
 		cacheProducts();
 		return new ModelAndView("manage-products");

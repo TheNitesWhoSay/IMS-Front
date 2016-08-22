@@ -1,20 +1,17 @@
 package com.revature.controllers;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,21 +29,16 @@ public class ClientController implements ServletContextAware, InitializingBean {
 	@Autowired
 	private ServletContext servletContext;
 	
-	private HashMap<String,StateAbbreviation> states = new LinkedHashMap<String,StateAbbreviation>();
-	private HashMap<String,ClientType> clientTypes = new HashMap<String,ClientType>();
+	@Autowired
+	private BusinessDelegate bd;
+	
+	private List<StateAbbreviation> states;
+	private List<ClientType> clientTypes;
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		DataLayer dl = new DataLayer();
-		List<StateAbbreviation> stateList = dl.getStates();
-		List<ClientType> clientTypeList = dl.getClientTypes();
-		
-		for (StateAbbreviation sa: stateList) {
-			states.put(sa.getAbbreviation(), sa);
-		}
-		for (ClientType ct: clientTypeList) {
-			clientTypes.put(ct.getType(), ct);
-		}
+		states = bd.getStates();
+		clientTypes = bd.getClientTypes();
 	}
 
 	@Override
@@ -59,8 +51,7 @@ public class ClientController implements ServletContextAware, InitializingBean {
 		try {
 			int cid = Integer.parseInt(id);
 			ModelAndView mv = new ModelAndView("/single-client");
-			DataLayer dl = new DataLayer();
-			Client c = dl.getClient(cid);
+			Client c = bd.getClient(cid);
 			
 			if (c == null) return new ModelAndView("redirect:/clients");
 			
@@ -75,8 +66,7 @@ public class ClientController implements ServletContextAware, InitializingBean {
 	@RequestMapping(value="clients", method=RequestMethod.GET)
 	public ModelAndView viewClients() {
 		ModelAndView mv = new ModelAndView("/clients");
-		DataLayer dl = new DataLayer();
-		mv.addObject("clients", dl.getAllClients());
+		mv.addObject("clients", bd.getAllClients());
 		return mv;
 	}
 	
@@ -98,8 +88,7 @@ public class ClientController implements ServletContextAware, InitializingBean {
 		try {
 			int cid = Integer.parseInt(id);
 			ModelAndView mv = new ModelAndView("/edit-client");
-			DataLayer dl = new DataLayer();
-			Client c = dl.getClient(cid);
+			Client c = bd.getClient(cid);
 			
 			if (c == null) return new ModelAndView("redirect:/clients");
 			
@@ -125,14 +114,12 @@ public class ClientController implements ServletContextAware, InitializingBean {
 			return mv;
 		}
 		else {
-			DataLayer dl = new DataLayer();
-			dl.beginTransaction();
-			dl.insertClient(client);
-			dl.commitOrRollback();
+			bd.insertClient(client);
 			return new ModelAndView("redirect:/clients");
 		}
 	}
 	
+	@ModelAttribute("client")
 	@RequestMapping(value="clients/id/{id}/edit", method=RequestMethod.POST)
 	public ModelAndView updateClient(@Valid Client client, BindingResult bindingResult, HttpServletRequest request) {
 		ModelAndView mv = new ModelAndView();
@@ -145,14 +132,9 @@ public class ClientController implements ServletContextAware, InitializingBean {
 			return mv;
 		}
 		else {
-			DataLayer dl = new DataLayer();
-			dl.beginTransaction();
-			dl.updateClient(client);
-			dl.commitOrRollback();
+			bd.updateClient(client);
 			return new ModelAndView("redirect:/clients");
 		}
 	}
-	
-	
 	
 }
