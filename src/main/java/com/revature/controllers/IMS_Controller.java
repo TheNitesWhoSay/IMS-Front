@@ -26,7 +26,7 @@ import com.revature.ims_backend.entities.Product;
 import com.revature.ims_backend.entities.Stock;
 import com.revature.logging.Log;
 
-@Controller
+//@Controller
 public class IMS_Controller implements ServletContextAware, InitializingBean {
 
 	@Autowired

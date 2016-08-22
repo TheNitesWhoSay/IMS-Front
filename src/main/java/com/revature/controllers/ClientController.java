@@ -37,8 +37,10 @@ public class ClientController implements ServletContextAware, InitializingBean {
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		states = bd.getStates();
-		clientTypes = bd.getClientTypes();
+		DataLayer dl = new DataLayer();
+		states = dl.getStates();
+		clientTypes = dl.getClientTypes();
+		dl.close();
 	}
 
 	@Override

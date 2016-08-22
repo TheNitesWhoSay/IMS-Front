@@ -17,7 +17,7 @@ import com.revature.ims_backend.entities.Stock;
 import com.revature.persist.DataLayer;
 
 @Component
-@Scope(value="session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope(value="request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class BusinessDelegate implements DisposableBean {
 	
 	private DataLayer dataLayer = new DataLayer();
