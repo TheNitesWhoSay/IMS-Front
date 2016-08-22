@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -20,14 +22,15 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.revature.business.ProductHelper;
-import com.revature.converters.StringToCategory;
 import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Product;
 import com.revature.ims_backend.entities.Stock;
 import com.revature.logging.Log;
 
-//@Controller
-public class IMS_Controller implements ServletContextAware, InitializingBean {
+@Controller
+public class IMS_Controller implements ServletContextAware, InitializingBean,
+	BeanPostProcessor
+{
 
 	@Autowired
 	private ServletContext servletContext;
@@ -37,8 +40,8 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		cacheCategories();
-		cacheProducts();
+		//cacheCategories();
+		//cacheProducts();
 	}
 
 	@Override
@@ -53,7 +56,7 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 		for ( Category category : categories ) {
 			categoryLookup.put(category.getDescription(), category);
 		}
-		StringToCategory.setCategories(categoryLookup);
+		//StringToCategory.setCategories(categoryLookup);
 		servletContext.setAttribute("listOfCategories", categories);
 		servletContext.setAttribute("categoryLookup", categoryLookup);
 	}
@@ -62,6 +65,18 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 		
 		Set<Product> products = bd.getProducts();
 		servletContext.setAttribute("listOfProducts", products);
+	}
+	
+	@Override
+	public Object postProcessBeforeInitialization(Object arg0, String arg1) throws BeansException {
+		return null;
+	}
+	
+	@Override
+	public Object postProcessAfterInitialization(Object arg0, String arg1) throws BeansException {
+		cacheCategories();
+		cacheProducts();
+		return null;
 	}
 
 	@RequestMapping(value="test.do", method=RequestMethod.GET)
@@ -127,4 +142,5 @@ public class IMS_Controller implements ServletContextAware, InitializingBean {
 		cacheCategories();
 		return new ModelAndView("manage-categories");
 	}
+	
 }
