@@ -22,6 +22,7 @@ import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.revature.business.ProductHelper;
+import com.revature.converters.StringToCategory;
 import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Product;
 import com.revature.ims_backend.entities.Stock;
@@ -57,7 +58,7 @@ public class IMS_Controller implements ServletContextAware, InitializingBean
 		for ( Category category : categories ) {
 			categoryLookup.put(category.getDescription(), category);
 		}
-		//StringToCategory.setCategories(categoryLookup);
+		StringToCategory.setCategories(categoryLookup);
 		servletContext.setAttribute("listOfCategories", categories);
 		servletContext.setAttribute("categoryLookup", categoryLookup);
 	}
