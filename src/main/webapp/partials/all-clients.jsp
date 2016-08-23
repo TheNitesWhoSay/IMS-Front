@@ -23,11 +23,4 @@
 	</tbody>
 </table>
 <a class="btn btn-primary" href="/IMS-Front/clients/new">Add Client</a>
-<script type="text/javascript">
-	$(document).ready(function() {
-		$("#clients-table").on("click", "tr", function() {
-			var id = $(this).attr("id").split("-")[1];
-			window.location = id ? "/IMS-Front/clients/id/" + id : "/IMS-Front/clients";
-		});
-	});
-</script>
+<script type="text/javascript" src="/IMS-Front/resources/js/clients.js"></script>
