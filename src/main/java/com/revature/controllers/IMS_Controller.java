@@ -28,8 +28,7 @@ import com.revature.ims_backend.entities.Stock;
 import com.revature.logging.Log;
 
 @Controller
-public class IMS_Controller implements ServletContextAware, InitializingBean,
-	BeanPostProcessor
+public class IMS_Controller implements ServletContextAware, InitializingBean
 {
 
 	@Autowired
@@ -40,8 +39,10 @@ public class IMS_Controller implements ServletContextAware, InitializingBean,
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		//cacheCategories();
-		//cacheProducts();
+		BusinessDelegate temp = new BusinessDelegate();
+		cacheCategories(temp);
+		cacheProducts(temp);
+		temp.destroy();
 	}
 
 	@Override
@@ -49,9 +50,9 @@ public class IMS_Controller implements ServletContextAware, InitializingBean,
 		this.servletContext = servletContext;
 	}
 	
-	public void cacheCategories() {
+	public void cacheCategories(BusinessDelegate businessDelegate) {
 		
-		Set<Category> categories = bd.getCategories();
+		Set<Category> categories = businessDelegate.getCategories();
 		Map<String, Category> categoryLookup = new HashMap<String, Category>();
 		for ( Category category : categories ) {
 			categoryLookup.put(category.getDescription(), category);
@@ -60,27 +61,36 @@ public class IMS_Controller implements ServletContextAware, InitializingBean,
 		servletContext.setAttribute("listOfCategories", categories);
 		servletContext.setAttribute("categoryLookup", categoryLookup);
 	}
+	public void cacheCategories() {
+		cacheCategories(bd);
+	}
 	
-	public void cacheProducts() {
+	public void cacheProducts(BusinessDelegate businessDelegate) {
 		
-		Set<Product> products = bd.getProducts();
+		Set<Product> products = businessDelegate.getProducts();
 		servletContext.setAttribute("listOfProducts", products);
 	}
-	
-	@Override
-	public Object postProcessBeforeInitialization(Object arg0, String arg1) throws BeansException {
-		return null;
+	public void cacheProducts() {
+		cacheProducts(bd);
 	}
 	
-	@Override
-	public Object postProcessAfterInitialization(Object arg0, String arg1) throws BeansException {
-		cacheCategories();
-		cacheProducts();
-		return null;
+	public void initCache() {
+		// Unsynchronized check for performance
+		if ( servletContext.getAttribute("cacheInitialized") == null ) {
+			synchronized ( servletContext ) {
+				// Synchronized check to avoid race conditions
+				if ( servletContext.getAttribute("cacheInitialized") == null ) {
+					cacheCategories();
+					cacheProducts();
+					servletContext.setAttribute("cacheInitialized", true);
+				}
+			}
+		}
 	}
 
 	@RequestMapping(value="test.do", method=RequestMethod.GET)
 	public String test() {
+		initCache();
 		return "test";
 	}
 	
