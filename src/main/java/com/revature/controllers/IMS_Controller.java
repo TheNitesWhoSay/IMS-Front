@@ -113,6 +113,11 @@ public class IMS_Controller implements ServletContextAware, InitializingBean
 		return "manage-categories";
 	}
 	
+	@RequestMapping(value="generateReports.do", method=RequestMethod.GET)
+	public String generateReports(HttpServletRequest req) {
+		return "generate-reports";
+	}
+	
 	
 	@RequestMapping(value="editStock.do", method=RequestMethod.POST)
 	public ModelAndView editStock(@Valid Stock stock,

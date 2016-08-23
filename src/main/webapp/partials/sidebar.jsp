@@ -10,6 +10,6 @@
 		<li><a href="/IMS-Front/manageCategories.do">Manage Categories</a></li>
 		<li><a href="#">View Invoices</a></li>
 		<li><a href="#">New Invoice</a></li>
-		<li><a href="#">Generate Reports</a></li>
+		<li><a href="/IMS-Front/generateReports.do">Generate Reports</a></li>
 	</ul>
 </div>
