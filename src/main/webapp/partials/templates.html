@@ -1,0 +1,161 @@
+<script type="text/template" id="single-client-modal-template">
+<div class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Client Details: <%= client.name %></h4>
+			</div>
+			<div class="modal-body">
+			
+				<table class="table table-default table-hover">
+				<tr>
+					<td>Client ID</td>
+					<td><%= client.id %></td>
+				</tr>
+				<tr>
+					<td>Client Name</td>
+					<td><%= client.name %></td>
+				</tr>
+				<tr>
+					<td>Point of Contact</td>
+					<td><%= client.pointOfContactName %></td>
+				</tr>
+				<tr>
+					<td>Email</td>
+					<td><%= client.email %></td>
+				</tr>
+				<tr>
+					<td>Phone Number</td>
+					<td><%= client.phoneNumber %></td>
+				</tr>
+				<tr>
+					<td>Fax Number</td>
+					<td><%= client.faxNumber %></td>
+				</tr>
+				<tr>
+					<td>Address</td>
+					<td><% client.address %></td>
+				</tr>
+				<tr>
+					<td>Type</td>
+					<td><%= client.clientType.type %></td>
+				</tr>
+				</table>
+				<button class="btn btn-primary" id="edit-client-<%= client.id %>">Edit Client</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
+
+<script type="text/template" id="edit-client-modal-template">
+<div class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Client Details: <%= client.name %></h4>
+			</div>
+			<div class="modal-body">
+			
+				<form method="post" action="/IMS-Front/api/clients/new" class="form-horizontal" id="client-form">
+					<div class="form-group">
+							<div class="col-sm-9 ">
+								<label for="name">Client Name</label>
+								<input type="text" value="<%= client.id %>" class="form-control" name="name" id="name">
+							</div>
+						
+							<div class="col-sm-3 ">
+								<label for="clientType">Client Type</label>
+								<select class="form-control" name="clientType" id="clientType">
+									<option value="Retailer">Retailer</option>
+									<option value="Supplier">Supplier</option></select>
+								
+							</div>
+						
+					</div>
+					
+						<div class="form-group ">
+							<div class="col-sm-12">
+								<label for="email">Client Email</label>
+								<input type="text" value="" class="form-control" name="email" id="email">
+								
+							</div>
+						</div>
+					
+					
+						<div class="form-group ">
+							<div class="col-sm-12">
+								<label for="pointOfContactName">Point of Contact Name</label>
+								<input type="text" value="" class="form-control" name="pointOfContactName" id="pointOfContactName">
+								
+							</div>
+						</div>
+					
+					<div class="form-group">
+						
+							<div class="col-sm-6 ">
+								<label for="phoneNumber">Phone Number</label>
+								<input type="text" value="" class="form-control" name="phoneNumber" id="phoneNumber">
+								
+							</div>
+						
+						
+							<div class="col-sm-6 ">
+								<label for="faxNumber">Fax Number</label>
+								<input type="text" value="" class="form-control" name="faxNumber" id="faxNumber">
+								
+							</div>
+						
+					</div>
+					
+						<div class="form-group ">
+							<div class="col-sm-12">
+								<input type="hidden" value="0" name="address.id" id="address.id">
+								<label for="address1">Address 1</label>
+								<input type="text" value="" class="form-control" name="address.address1" id="address.address1">
+								
+							</div>
+						</div>
+					
+					
+						<div class="form-group ">
+							<div class="col-sm-12">
+								<label for="address2">Address 2</label>
+								<input type="text" value="" class="form-control" name="address.address2" id="address.address2">
+								
+							</div>
+						</div>
+					
+					<div class="form-group">
+						
+							<div class="col-sm-8 ">
+								<label for="city">City</label>
+								<input type="text" value="" class="form-control" name="address.city" id="address.city">
+								
+							</div>
+						
+						
+							<div class="col-xs-4 col-sm-2 ">
+								<label for="state">State</label>
+								<select class="form-control" name="address.state" id="address.state">
+									
+								</select>
+								
+							</div>
+						
+						
+							<div class="col-xs-8 col-sm-2 ">
+								<label for="zip">ZIP</label>
+								<input type="text" value="" class="form-control" name="address.zip" id="address.zip">
+								
+							</div>
+						
+					</div>
+					<button value="Submit" type="submit" class="btn btn-primary">Submit</button>
+				</form>
+				<button class="btn btn-primary" id="edit-client-<%= client.id %>">Edit Client</button>
+			</div>
+		</div>
+	</div>
+</div>
+</script>
