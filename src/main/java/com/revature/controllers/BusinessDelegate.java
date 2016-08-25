@@ -223,5 +223,17 @@ public class BusinessDelegate implements DisposableBean {
 			e.printStackTrace();
 		}
 	}
+
+	public List<Stock> getInventoryLevels() {
+		List<Stock> inventoryLevels = new ArrayList<Stock>();
+		inventoryLevels.addAll(dataLayer.getInventoryLevels());
+		for ( Stock stock : inventoryLevels ) {
+			if ( stock.getProduct() != null ) {
+				stock.getProduct().setStock(null);
+				stock.getProduct().setCategories(null);
+			}
+		}
+		return inventoryLevels;
+	}
 	
 }

@@ -1,5 +1,8 @@
 package com.revature.controllers;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.revature.dto.ClientDTO;
 import com.revature.ims_backend.entities.Client;
+import com.revature.ims_backend.entities.Stock;
 
 @Controller
 public class AjaxController {
@@ -21,6 +25,18 @@ public class AjaxController {
 	
 	@Autowired
 	private BusinessDelegate bd;
+	
+	@RequestMapping(value="/api/inventory/dailyValues")
+	@ResponseBody
+	public List<Double> getDailyValues() {
+		return bd.getDailyInventoryValues();
+	}
+	
+	@RequestMapping(value="/api/inventory/inventoryLevels")
+	@ResponseBody
+	public List<Stock> getInventoryLevels() {
+		return bd.getInventoryLevels();
+	}
 	
 	@RequestMapping(value="/api/clients/id/{id}", method=RequestMethod.GET)
 	@ResponseBody
