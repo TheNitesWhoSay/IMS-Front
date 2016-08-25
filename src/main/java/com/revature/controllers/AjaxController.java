@@ -1,7 +1,12 @@
 package com.revature.controllers;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
+=======
+import java.util.List;
+import java.util.Set;
+>>>>>>> 028f191440d3e52b2119828bdf19b311129d4767
 
 import javax.servlet.ServletContext;
 
@@ -18,6 +23,7 @@ import com.revature.dto.ClientDTO;
 import com.revature.dto.ProductCollectionDTO;
 import com.revature.ims_backend.entities.Client;
 import com.revature.ims_backend.entities.Product;
+import com.revature.ims_backend.entities.Stock;
 
 @Controller
 public class AjaxController {
@@ -27,6 +33,18 @@ public class AjaxController {
 	
 	@Autowired
 	private BusinessDelegate bd;
+	
+	@RequestMapping(value="/api/inventory/dailyValues")
+	@ResponseBody
+	public List<Double> getDailyValues() {
+		return bd.getDailyInventoryValues();
+	}
+	
+	@RequestMapping(value="/api/inventory/inventoryLevels")
+	@ResponseBody
+	public List<Stock> getInventoryLevels() {
+		return bd.getInventoryLevels();
+	}
 	
 	@RequestMapping(value="/api/clients/id/{id}", method=RequestMethod.GET)
 	@ResponseBody

@@ -19,7 +19,8 @@
     <property name="prefix" value="" /> <!-- /pages/ -->
   	<property name="suffix" value=".jsp" />
   </bean>
-	<mvc:resources mapping="/resources/**" location="/resources/" />
+  
+  <mvc:resources mapping="/resources/**" location="/resources/" />
   
   <!-- Setup converters -->
   <bean id="conversionService"

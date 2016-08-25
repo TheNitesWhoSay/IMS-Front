@@ -53,5 +53,4 @@ $(document).ready(function() {
 		*/
 		window.location = id ? "/IMS-Front/clients/id/" + id + "/edit" : "/IMS-Front/clients";
 	});
-	*/
 });

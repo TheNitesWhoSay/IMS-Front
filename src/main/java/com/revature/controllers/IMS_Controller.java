@@ -115,6 +115,7 @@ public class IMS_Controller implements ServletContextAware, InitializingBean
 	
 	@RequestMapping(value="generateReports.do", method=RequestMethod.GET)
 	public String generateReports(HttpServletRequest req) {
+		req.setAttribute("dailyInventoryValues", bd.getDailyInventoryValues());
 		return "generate-reports";
 	}
 	
