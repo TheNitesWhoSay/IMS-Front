@@ -1,10 +1,14 @@
 package com.revature.controllers;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -13,8 +17,10 @@ import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Client;
 import com.revature.ims_backend.entities.ClientType;
 import com.revature.ims_backend.entities.Product;
+import com.revature.ims_backend.entities.PurchaseOrder;
 import com.revature.ims_backend.entities.StateAbbreviation;
 import com.revature.ims_backend.entities.Stock;
+import com.revature.logging.Log;
 import com.revature.persist.DataLayer;
 
 @Component
@@ -118,6 +124,97 @@ public class BusinessDelegate implements DisposableBean {
 		dataLayer.updateClient(client);
 		dataLayer.commitOrRollback();
 	}
+	
+	/**
+	 * Calculates total value of the inventory
+	 * not described within the invoices
+	 * @return The total value of the inventory minus the net value described in invoices
+	 */
+	public double getTotalUnaccountedInventoryValue() {
+		
+		double totalInventoryValue = 0;
+		Set<Product> products = dataLayer.getProducts();
+		for ( Product product : products ) {
+			double unitCost = product.getUnitCost();
+			double numInStock = (double)product.getStock().getNumInStock();
+			double productStockValue = unitCost*numInStock;
+			totalInventoryValue += productStockValue;
+		}
+		
+		double totalValueIn = 0;
+		double totalValueOut = 0;
+		Set<PurchaseOrder> purchaseOrders = dataLayer.getPurchaseOrders();
+		for ( PurchaseOrder purchaseOrder : purchaseOrders ) {
+			ClientType clientType = purchaseOrder.getClient().getClientType();
+			if ( clientType.isRetailer() ) {
+				totalValueOut += purchaseOrder.getSubTotal();
+			} else if ( clientType.isSupplier() ) {
+				totalValueIn += purchaseOrder.getSubTotal();
+			}
+		}
+		double netAccountedValue = totalValueIn - totalValueOut;
+		double totalUnaccountedValue = totalInventoryValue - netAccountedValue;
+		
+		return totalUnaccountedValue;
+	}
+	
+	public LocalDate toLocalDate(Date date) {
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	}
+	
+	public List<Double> getDailyInventoryValues() {
+		
+		List<Double> dailyInventoryValue = new ArrayList<Double>();
+		double totalUnaccountedValue = getTotalUnaccountedInventoryValue();
+		
+		Set<PurchaseOrder> purchaseOrders = dataLayer.getPurchaseOrders();
+		if ( purchaseOrders.size() <= 0 )
+			return null;
+		
+		List<PurchaseOrder> chronologicalPurchaseOrders = new ArrayList<PurchaseOrder>();
+		
+		while ( purchaseOrders.size() > 0 ) {
+			PurchaseOrder earliest = purchaseOrders.iterator().next();
+			for ( PurchaseOrder purchaseOrder : purchaseOrders ) {
+				Date purchaseDate = purchaseOrder.getPurchaseDate();
+				if ( purchaseDate.before(earliest.getPurchaseDate()) ) {
+					earliest = purchaseOrder;
+				}
+			}
+			chronologicalPurchaseOrders.add(earliest);
+			purchaseOrders.remove(earliest);
+		}
+		
+		LocalDate startDate = toLocalDate(
+				chronologicalPurchaseOrders.get(0).getPurchaseDate()).minusDays(1);
+		LocalDate endDate = toLocalDate(new Date());
+		
+		Iterator<PurchaseOrder> i = chronologicalPurchaseOrders.iterator();
+		PurchaseOrder currOrder = i.next();
+		
+		double runningValue = totalUnaccountedValue;
+		for ( LocalDate currDate = startDate;
+			  currDate.compareTo(endDate) < 0;
+			  currDate = currDate.plusDays(1) )
+		{
+			while ( currOrder != null &&
+					toLocalDate(currOrder.getPurchaseDate()).compareTo(currDate) == 0 )
+			{
+				if ( currOrder.getClient().getClientType().isSupplier() ) {
+					runningValue += currOrder.getSubTotal();
+				} else if ( currOrder.getClient().getClientType().isRetailer() ) {
+					runningValue -= currOrder.getSubTotal();
+				}
+				if ( i.hasNext() ) {
+					currOrder = i.next();
+				} else {
+					currOrder = null;
+				}
+			}
+			dailyInventoryValue.add(runningValue);
+		}
+		return dailyInventoryValue;
+	}
 
 	public void destroy() throws Exception {
 		try {
@@ -125,6 +222,18 @@ public class BusinessDelegate implements DisposableBean {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<Stock> getInventoryLevels() {
+		List<Stock> inventoryLevels = new ArrayList<Stock>();
+		inventoryLevels.addAll(dataLayer.getInventoryLevels());
+		for ( Stock stock : inventoryLevels ) {
+			if ( stock.getProduct() != null ) {
+				stock.getProduct().setStock(null);
+				stock.getProduct().setCategories(null);
+			}
+		}
+		return inventoryLevels;
 	}
 	
 }
