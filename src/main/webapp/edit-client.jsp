@@ -6,7 +6,7 @@
 		<%@ include file="partials/sidebar.jsp" %>
 	</div>
 	<div class="col-sm-9">
-		<%@ include file="partials/dashboard.jsp" %>
+		<%@ include file="partials/edit-client.jsp" %>
 	</div>
 
 </div>

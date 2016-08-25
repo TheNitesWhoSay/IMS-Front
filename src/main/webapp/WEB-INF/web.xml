@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
-  <display-name>ERS Front-End</display-name>
+  <display-name>IMS Front-End</display-name>
   
   <!-- The front controller of this Spring Web application,
   	   responsible for handling all application requests -->
@@ -13,7 +13,12 @@
   <!-- Map all requests to the DispatcherServlet for handling -->
   <servlet-mapping>
     <servlet-name>ims</servlet-name>
-    <url-pattern>*.do</url-pattern>
+    <url-pattern>/</url-pattern>
   </servlet-mapping>
   
+  <!-- For creating session scoped variables in spring -->
+  <listener>
+	<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+  </listener>
+
 </web-app>
