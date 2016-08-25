@@ -159,3 +159,18 @@ var editClientTemplate = `
 	</div>
 </div>
 `
+
+var modalTemplate = `
+<div class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Select Product</h4>
+			</div>
+			<div class="modal-body">
+				
+			</div>
+		</div>
+	</div>
+</div>
+`

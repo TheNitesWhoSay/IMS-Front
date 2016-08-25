@@ -139,4 +139,8 @@ public class ClientController implements ServletContextAware, InitializingBean {
 		}
 	}
 	
+	@RequestMapping(value="invoices", method=RequestMethod.GET)
+	public ModelAndView newInvoice() {
+		return new ModelAndView("invoices");
+	}
 }
