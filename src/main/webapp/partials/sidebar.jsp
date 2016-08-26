@@ -8,8 +8,8 @@
 		<li><a href="/IMS-Front/manageProducts.do">View Products</a></li>
 		<li><a href="/IMS-Front/manageInventory.do">View Inventory</a></li>
 		<li><a href="/IMS-Front/manageCategories.do">Manage Categories</a></li>
-		<li><a href="#">View Invoices</a></li>
-		<li><a href="#">New Invoice</a></li>
+		<li><a href="/IMS-Front/invoices">View Invoices</a></li>
+		<li><a href="/IMS-Front/invoices/new">New Invoice</a></li>
 		<li><a href="/IMS-Front/generateReports.do">Generate Reports</a></li>
 	</ul>
 </div>

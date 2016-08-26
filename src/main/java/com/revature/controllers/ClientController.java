@@ -1,7 +1,9 @@
 package com.revature.controllers;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.revature.ims_backend.entities.Client;
 import com.revature.ims_backend.entities.ClientType;
+import com.revature.ims_backend.entities.PurchaseOrder;
 import com.revature.ims_backend.entities.StateAbbreviation;
 import com.revature.persist.DataLayer;
 
@@ -140,7 +143,21 @@ public class ClientController implements ServletContextAware, InitializingBean {
 	}
 	
 	@RequestMapping(value="invoices", method=RequestMethod.GET)
+	public ModelAndView viewInvoices() {
+		Set<PurchaseOrder> poSet = bd.getDataLayer().getPurchaseOrders();
+		List<PurchaseOrder> poList = new ArrayList<>(poSet);
+		poList.sort(new Comparator<PurchaseOrder>() {
+			public int compare(PurchaseOrder o1, PurchaseOrder o2) {
+				return o1.getPurchaseDate().compareTo(o2.getPurchaseDate());
+			}
+		});
+		ModelAndView mv = new ModelAndView("invoices");
+		mv.addObject("invoices", poList);
+		return mv;
+	}
+	
+	@RequestMapping(value="invoices/new", method=RequestMethod.GET)
 	public ModelAndView newInvoice() {
-		return new ModelAndView("invoices");
+		return new ModelAndView("/new-invoice");
 	}
 }

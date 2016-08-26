@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Client;
 import com.revature.ims_backend.entities.ClientType;
+import com.revature.ims_backend.entities.OrderLine;
 import com.revature.ims_backend.entities.Product;
 import com.revature.ims_backend.entities.PurchaseOrder;
 import com.revature.ims_backend.entities.StateAbbreviation;
 import com.revature.ims_backend.entities.Stock;
-import com.revature.logging.Log;
 import com.revature.persist.DataLayer;
 
 @Component
@@ -234,6 +234,30 @@ public class BusinessDelegate implements DisposableBean {
 			}
 		}
 		return inventoryLevels;
+	}
+	
+	public PurchaseOrder getInvoice(int id) {
+		return dataLayer.getInvoice(id);
+	}
+	
+	public boolean processInvoice(PurchaseOrder po) {
+		po.setPurchaseDate(new Date());
+		int i = 1;
+		for (OrderLine line: po.getOrderLines()) {
+			line.setLineNumber(i);
+			line.setProduct(this.getProductByUpc(line.getProduct().getUpc()));
+			int upc = line.getProduct().getUpc();
+			int stock = line.getProduct().getStock().getNumInStock();
+			if (po.getClient().getClientType().getType().equals("Supplier"))
+				this.updateStock(upc, stock + line.getQuantityOrdered());
+			else
+				this.updateStock(upc, stock + line.getQuantityOrdered());
+			i++;
+		}
+		dataLayer.beginTransaction();
+		dataLayer.insertPurchaseOrder(po);
+		dataLayer.commitOrRollback();
+		return true;
 	}
 	
 }
