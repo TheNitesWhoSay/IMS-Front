@@ -1,3 +1,63 @@
+var currencyFormat = num => num.toLocaleString("en-US", {style: "currency", currency: "USD"});
+
+var invoiceLineTemplate = `
+	<tr>
+		<td><%= lineNumber %></td>
+		<td>(<%= product.shortName %>) <%= product.name %> - <%= product.description %></td>
+		<td><%= currencyFormat(unitPrice) %></td>
+		<td><%= quantityOrdered %></td>
+		<td><%= currencyFormat(unitPrice * quantityOrdered) %></td>
+	</tr>
+`
+
+var invoiceLine = _.template(invoiceLineTemplate);
+
+var invoiceTemplate = `
+<div class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Order Details: <%= invoice.orderNumber %></h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-6">
+						<p><b><%= invoice.client.name %></b></p>
+						<p><%= invoice.client.address.address1 %></p>
+						<%= invoice.client.address.address2 ? '<p>' + invoice.client.address.address2 + '</p>' : '' %>
+						<p><%= invoice.client.address.city %>, <%= invoice.client.address.state.abbreviation %> <%= invoice.client.address.zip %></p>
+					</div>
+					<div class="col-sm-6 text-right">
+						<p><%= invoice.purchaseDate %></p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>Line</th>
+									<th>Description</th>
+									<th>Unit Cost</th>
+									<th>Quantity</th>
+									<th>Total Cost</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% invoice.orderLines.forEach(line => print(invoiceLine(line))) %>
+							</tbody>
+							<tfoot>
+								Total
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+`
+
 var singleClientTemplate = `
 <div class="modal fade">
 	<div class="modal-dialog">
@@ -34,7 +94,7 @@ var singleClientTemplate = `
 				</tr>
 				<tr>
 					<td>Address</td>
-					<td><% client.address %></td>
+					<td><%= client.address.formattedAddress %></td>
 				</tr>
 				<tr>
 					<td>Type</td>
