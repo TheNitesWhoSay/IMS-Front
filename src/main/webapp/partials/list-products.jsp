@@ -2,6 +2,7 @@
 
 <!-- List Products -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <table class="table">
   <tr>
@@ -25,8 +26,8 @@
       <td><c:out value="${product.description}"></c:out></td>
       <td><c:out value="${product.packSize}"></c:out></td>
       <td><c:out value="${product.reorderQuantity}"></c:out></td>
-      <td><c:out value="${product.unitCost}"></c:out></td>
-      <td><c:out value="${product.retailPrice}"></c:out></td>
+      <td><fmt:formatNumber value="${product.unitCost}" type="currency"/></td>
+      <td><fmt:formatNumber value="${product.retailPrice}" type="currency"/></td>
       <td><c:out value="${product.weight}"></c:out></td>
       <td>
         <c:set var="hasPreviousCategories" value="${false}"></c:set>
@@ -43,7 +44,9 @@
             <a href="${product.image.address}">View Image</a>
           </c:when>
           <c:otherwise>
-            (addImageModalButton)
+            <jsp:include page="add-image.jsp">
+	      	  <jsp:param name="upc" value="${product.upc}" />
+	        </jsp:include>
           </c:otherwise>
         </c:choose>
       </td>

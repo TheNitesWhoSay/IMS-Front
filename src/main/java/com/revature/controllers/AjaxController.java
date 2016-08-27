@@ -1,12 +1,8 @@
 package com.revature.controllers;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
-=======
-import java.util.List;
 import java.util.Set;
->>>>>>> 028f191440d3e52b2119828bdf19b311129d4767
 
 import javax.servlet.ServletContext;
 
@@ -23,6 +19,7 @@ import com.revature.dto.ClientDTO;
 import com.revature.dto.ProductCollectionDTO;
 import com.revature.ims_backend.entities.Client;
 import com.revature.ims_backend.entities.Product;
+import com.revature.ims_backend.entities.PurchaseOrder;
 import com.revature.ims_backend.entities.Stock;
 
 @Controller
@@ -42,10 +39,11 @@ public class AjaxController {
 	
 	@RequestMapping(value="/api/inventory/inventoryLevels")
 	@ResponseBody
-	public List<Stock> getInventoryLevels() {
-		return bd.getInventoryLevels();
+	public List<Product> getInventoryLevels() {
+		List<Product> products = new ArrayList<Product>(bd.getProducts());
+		return products;
 	}
-	
+
 	@RequestMapping(value="/api/clients/id/{id}", method=RequestMethod.GET)
 	@ResponseBody
 	public ClientDTO getSingleClient(@PathVariable("id") String id) {

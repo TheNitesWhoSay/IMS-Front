@@ -45,10 +45,10 @@ function showInventoryLevels(inventoryLevels) {
 	var inStockArray = [];
 	var missingArray = [];
 	for ( var i=0; i<inventoryLevels.length; i++ ) {
-		var stock = inventoryLevels[i];
-		if ( stock != null ) {
-			var product = stock.product;
-			if ( product != null ) {
+		var product = inventoryLevels[i];
+		if ( product != null ) {
+			var stock = product.stock;
+			if ( stock != null ) {
 				nameArray.push(product.name);
 				inStockArray.push(stock.numInStock);
 				var missing = product.reorderQuantity-stock.numInStock;
@@ -57,6 +57,9 @@ function showInventoryLevels(inventoryLevels) {
 				missingArray.push(missing);
 			}
 		}
+	}
+	for ( var i=0; i<inventoryLevels.length; i++ ) {
+		console.log(inStockArray[i]);
 	}
 	
     $('#inventoryLevel').highcharts({

@@ -17,6 +17,7 @@ import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Client;
 import com.revature.ims_backend.entities.ClientType;
 import com.revature.ims_backend.entities.Product;
+import com.revature.ims_backend.entities.ProductImage;
 import com.revature.ims_backend.entities.PurchaseOrder;
 import com.revature.ims_backend.entities.StateAbbreviation;
 import com.revature.ims_backend.entities.Stock;
@@ -29,7 +30,7 @@ public class BusinessDelegate implements DisposableBean {
 	private DataLayer dataLayer = new DataLayer();
 	
 	public BusinessDelegate() {
-		System.out.println(this);
+		
 	}
 
 	public DataLayer getDataLayer() {
@@ -108,6 +109,13 @@ public class BusinessDelegate implements DisposableBean {
 	public boolean insertStock(Stock stock) {
 		dataLayer.beginTransaction();
 		dataLayer.insertStock(stock);
+		return dataLayer.commitOrRollback();
+	}
+	
+	public boolean insertImage(Product product, ProductImage productImage) {
+		dataLayer.beginTransaction();
+		dataLayer.insertProductImage(productImage);
+		dataLayer.updateProduct(product);
 		return dataLayer.commitOrRollback();
 	}
 
@@ -224,16 +232,16 @@ public class BusinessDelegate implements DisposableBean {
 		}
 	}
 
-	public List<Stock> getInventoryLevels() {
-		List<Stock> inventoryLevels = new ArrayList<Stock>();
-		inventoryLevels.addAll(dataLayer.getInventoryLevels());
-		for ( Stock stock : inventoryLevels ) {
-			if ( stock.getProduct() != null ) {
-				stock.getProduct().setStock(null);
-				stock.getProduct().setCategories(null);
-			}
-		}
-		return inventoryLevels;
-	}
+//	public List<Product> getInventoryLevels() {
+//		List<Stock> inventoryLevels = new ArrayList<Stock>();
+//		inventoryLevels.addAll(dataLayer.getInventoryLevels());
+//		for ( Stock stock : inventoryLevels ) {
+//			if ( stock.getProduct() != null ) {
+//				stock.getProduct().setStock(null);
+//				stock.getProduct().setCategories(null);
+//			}
+//		}
+//		return inventoryLevels;
+//	}
 	
 }

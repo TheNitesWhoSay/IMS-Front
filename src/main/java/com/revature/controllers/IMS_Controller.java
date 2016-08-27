@@ -1,5 +1,8 @@
 package com.revature.controllers;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -9,22 +12,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.revature.business.ProductHelper;
+import com.revature.business.FileUploader;
 import com.revature.converters.StringToCategory;
 import com.revature.ims_backend.entities.Category;
 import com.revature.ims_backend.entities.Product;
+import com.revature.ims_backend.entities.ProductImage;
 import com.revature.ims_backend.entities.Stock;
 import com.revature.logging.Log;
 
@@ -40,6 +45,7 @@ public class IMS_Controller implements ServletContextAware, InitializingBean
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		
 		BusinessDelegate temp = new BusinessDelegate();
 		cacheCategories(temp);
 		cacheProducts(temp);
@@ -153,11 +159,59 @@ public class IMS_Controller implements ServletContextAware, InitializingBean
 			BindingResult bindingResult, ModelMap map,
 			HttpServletRequest req, HttpServletResponse resp)
 	{
-		System.out.println(category);
+		Log.info(category);
 		if ( !bd.insertCategory(category) )
-			System.out.println("insert failed");
+			Log.info("insert failed");
 		cacheCategories();
 		return new ModelAndView("manage-categories");
 	}
 	
+	public void saveFile(MultipartFile file, String fileName)
+	{    
+	    File convFile = new File("/tmp/" + fileName);
+	    try {
+	    	convFile.createNewFile();
+		    FileOutputStream fos = new FileOutputStream(convFile); 
+		    fos.write(file.getBytes());
+		    fos.close();
+	    } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping(value="addImage.do", method=RequestMethod.POST)
+	public String uploadFileHandler(
+			@RequestParam("upc") String upc,
+			@RequestParam("file") MultipartFile file,
+			HttpServletRequest req) {
+
+		if (!file.isEmpty()) {
+			try {
+				byte[] bytes = file.getBytes();
+				int fileSize = bytes.length;
+				String fileExtension =
+						file.getOriginalFilename().substring(
+								file.getOriginalFilename().lastIndexOf("."));
+				String fileName = upc + fileExtension;
+				saveFile(file, fileName);
+				String url = FileUploader.uploadFile(fileName, new File(fileName));
+				ProductImage productImage = new ProductImage(0, url);
+				Product product = bd.getProductByUpc(Integer.parseInt(upc));
+				product.setImage(productImage);
+				bd.insertImage(product, productImage);
+				cacheProducts();
+				Log.info("upc: " + upc);
+				Log.info("fileName: " + fileName);
+				Log.info("File length: " + fileSize);
+			} catch (Exception e) {
+				Log.info("File upload failed: " + e.getMessage());
+			}
+		} else {
+			Log.info("File uploaded was empty!");
+		}
+		req.setAttribute("product", new Product());
+		return "manage-products";
+	}
+
 }
