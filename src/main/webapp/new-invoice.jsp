@@ -8,7 +8,7 @@
   <script src="http://underscorejs.org/underscore.js" type="text/javascript"></script>
   <script src="/IMS-Front/resources/js/templates.js" type="text/javascript"></script>
   <script crossorigin="anonymous" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js" type="text/javascript"></script>
   <title>Inventory Management System</title>
 
   <!-- TODO: Define in separate file -->
